@@ -9,7 +9,7 @@ describe('insurance data source integration test', () => {
     });
 
     test('Clients data source is available and returns expected schema', async () => {
-        const clients = await insuranceService.getClients();
+        const clients = await insuranceService.fetchClientsFromSource();
         expect(Array.isArray(clients)).toBeTruthy();
         expect(clients.length).toBeTruthy();
         
@@ -25,7 +25,7 @@ describe('insurance data source integration test', () => {
     });
 
     test('Policies data source is available and returns expected schema', async () => {
-        const policies = await insuranceService.getPolicies();
+        const policies = await insuranceService.fetchPoliciesFromSource();
         expect(Array.isArray(policies)).toBeTruthy();
         expect(policies.length).toBeTruthy();
 
@@ -42,5 +42,32 @@ describe('insurance data source integration test', () => {
             'invalid or missing `installmentPayment` prop on policy object');                    
         assert((policy.clientId && typeof policy.clientId === 'string'), 
             'invalid or missing `clientId` prop on policy object');           
+    });
+});
+
+
+describe('insurance module unit tests', () => {
+    const insuranceService = container.resolve('insuranceService');
+
+    afterAll(async () => {
+        await container.dispose();
+    });
+
+    test('Get clients data method and cache', async () => {
+        const { cache, constants } = insuranceService;
+        const clients = await insuranceService.getClients();
+        expect(Array.isArray(clients)).toBeTruthy();
+        expect(clients.length).toBeTruthy();
+        const inCache = cache.get(constants['CACHE_CLIENTS_KEY']);
+        assert(inCache, 'Error on clients cache');
+    });
+
+    test('Get policies data method and cache', async () => {
+        const { cache, constants } = insuranceService;
+        const policies = await insuranceService.getPolicies();
+        expect(Array.isArray(policies)).toBeTruthy();
+        expect(policies.length).toBeTruthy();
+        const inCache = cache.get(constants['CACHE_POLICIES_KEY']);
+        assert(inCache, 'Error on policies cache');
     });
 });

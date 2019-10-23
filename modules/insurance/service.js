@@ -1,12 +1,33 @@
 const fetch = require('node-fetch');
 
-module.exports = ({ config }) => {
+module.exports = ({ config, cache }) => {
     const { host, policiesPath, clientsPath } = config.get('insurance');
 
+    const CACHE_POLICIES_KEY = 'policies';
+    const CACHE_CLIENTS_KEY = 'clients';
+    
     return {
+        cache: cache,
+        constants : { CACHE_CLIENTS_KEY, CACHE_POLICIES_KEY },
 
         async getPolicies() {
-            const response = await fetch(`${host}${policiesPath}`, { rejectUnauthorized: true });
+            const cachedPolicies = cache.get(CACHE_POLICIES_KEY);
+            const policies = cachedPolicies ? 
+                cachedPolicies : await this.fetchPoliciesFromSource();
+            if (!cachedPolicies) cache.set(CACHE_POLICIES_KEY, policies);
+            return policies;
+        },
+
+        async getClients() {
+            const cachedClients = cache.get(CACHE_CLIENTS_KEY);
+            const clients = cachedClients ? 
+                cachedClients : await this.fetchClientsFromSource();
+            if (!cachedClients) cache.set(CACHE_CLIENTS_KEY, clients);
+            return clients;
+        },
+
+        async fetchPoliciesFromSource() {                       
+            const response = await fetch(`${host}${policiesPath}`);
             if (response.status !== 200) {
                 throw new Error('Policies service not availbale');
             }
@@ -14,7 +35,7 @@ module.exports = ({ config }) => {
             return policies;
         },
 
-        async getClients() {
+        async fetchClientsFromSource(fromCache = true) {
             const response = await fetch(`${host}${clientsPath}`);
             if (response.status !== 200) {
                 throw new Error('Clients service not availbale');
@@ -22,7 +43,6 @@ module.exports = ({ config }) => {
             const { clients } = await response.json();
             return clients;
         }
-
 
     }
 };
