@@ -1,0 +1,32 @@
+{
+  "name": "insurance-api",
+  "version": "1.0.0",
+  "description": "amaris backend code challenge",
+  "main": "server.js",
+  "scripts": {
+    "dev": "NODE_ENV=dev ./node_modules/.bin/nodemon .",
+    "start": "./node_modules/.bin/nodemon --quiet .",
+    "test": "NODE_ENV=jest jest --coverage"
+  },
+  "author": "Juan Manuel Sanchez <usuario.jm@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^3.0.0",
+    "awilix": "^4.2.2",
+    "config": "^3.2.3",
+    "dotenv": "^8.2.0",
+    "koa": "^2.10.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-helmet": "^5.2.0",
+    "koa-respond": "^2.1.0",
+    "koa-router": "^7.4.0",
+    "nodemon": "^1.19.4"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "jest": "^24.9.0",
+    "supertest": "^4.0.2"
+  }
+}
