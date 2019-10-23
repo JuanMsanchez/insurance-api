@@ -10,3 +10,24 @@ Manage insurance information
 #### External resources
 - [Company clients](https://www.mocky.io/v2/5808862710000087232b75ac) 
 - [Company policies](https://www.mocky.io/v2/580891a4100000e8242b75c5)
+
+## Installation
+requires __node v10.16.3__ or higher.
+```
+git clone https://gitlab.com/invad3r/insurance-api
+cd insurance-api/
+npm install
+npm start
+```
+
+## REST Modules
+| Module name        | Description                              | Base path               |
+| ------------------ | ---------------------------------------- | ----------------------- |
+| status             | returns the API status and uptime        | /status                 |
+
+
+## Test
+Tests are implemented with [Jest](https://jestjs.io/en/)
+```
+npm test
+```
