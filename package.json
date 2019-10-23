@@ -20,6 +20,7 @@
     "koa-helmet": "^5.2.0",
     "koa-respond": "^2.1.0",
     "koa-router": "^7.4.0",
+    "node-fetch": "^2.6.0",
     "nodemon": "^1.19.4"
   },
   "devDependencies": {

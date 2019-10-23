@@ -9,6 +9,7 @@ const config = require('config');
 const awilix = require('awilix');
 
 const status = require('./modules/status');
+const insurance = require('./modules/insurance');
 
 const {
   createContainer,
@@ -43,6 +44,7 @@ container.register({
 // registering application endpoints and services
 container.register({
   statusRoutes: asFunction(status.routes),
+  insuranceService: asFunction(insurance.service),
 });
 
 app.use(respond());
