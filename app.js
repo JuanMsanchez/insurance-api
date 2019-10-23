@@ -7,15 +7,17 @@ const Helmet = require('koa-helmet');
 const respond = require('koa-respond');
 const config = require('config');
 const awilix = require('awilix');
+
 const NodeCache = require("node-cache");
+const { JWK } = require('@panva/jose');
 
 const status = require('./modules/status');
 const insurance = require('./modules/insurance');
+const auth = require('./modules/auth');
 
 const {
   createContainer,
   asValue,
-  asClass,
   asFunction,
   InjectionMode,
 } = awilix;
@@ -40,6 +42,7 @@ const container = createContainer({
 
 // registering core dependencies
 container.register({
+  key: asValue(JWK.generateSync('RSA', 2048)),
   config: asValue(config),
   cache: asFunction(() => new NodeCache()).singleton(),  
 });
@@ -48,6 +51,7 @@ container.register({
 container.register({
   statusRoutes: asFunction(status.routes),
   insuranceService: asFunction(insurance.service),
+  authService: asFunction(auth.service),
 });
 
 app.use(respond());

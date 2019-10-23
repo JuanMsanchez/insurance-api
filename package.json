@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^3.0.0",
+    "@panva/jose": "^1.9.2",
     "awilix": "^4.2.2",
     "config": "^3.2.3",
     "dotenv": "^8.2.0",
