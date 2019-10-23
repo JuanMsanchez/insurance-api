@@ -7,6 +7,7 @@ const Helmet = require('koa-helmet');
 const respond = require('koa-respond');
 const config = require('config');
 const awilix = require('awilix');
+const NodeCache = require("node-cache");
 
 const status = require('./modules/status');
 const insurance = require('./modules/insurance');
@@ -14,6 +15,7 @@ const insurance = require('./modules/insurance');
 const {
   createContainer,
   asValue,
+  asClass,
   asFunction,
   InjectionMode,
 } = awilix;
@@ -39,6 +41,7 @@ const container = createContainer({
 // registering core dependencies
 container.register({
   config: asValue(config),
+  cache: asFunction(() => new NodeCache()).singleton(),  
 });
 
 // registering application endpoints and services
