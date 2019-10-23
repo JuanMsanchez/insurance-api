@@ -26,11 +26,22 @@ module.exports = ({ config, cache }) => {
             return policies;
         },
 
-        async getClients() {
+        async getClients(filters = {}) {
             const cachedClients = cache.get(CACHE_CLIENTS_KEY);
-            const clients = cachedClients ? 
+            let clients = cachedClients ? 
                 cachedClients : await this.fetchClientsFromSource();
             if (!cachedClients) cache.set(CACHE_CLIENTS_KEY, clients);
+            
+            const { policyId, name, id } = filters;
+            if (policyId) {
+                const policies = await this.getPolicies() || [];
+                const policy = policies.find(p => p.id === policyId);
+                clients = policy ? clients.filter(c => c.id === policy.clientId) : [];
+            }
+            clients = id ? clients.filter(c => c.id === id) : clients;
+            clients = name ? clients.filter(c => 
+                c.name.toLowerCase().includes(name.toLowerCase())) : clients;
+
             return clients;
         },
 

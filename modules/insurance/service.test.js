@@ -42,7 +42,7 @@ describe('insurance module unit tests', () => {
         await container.dispose();
     });
 
-    test('Get clients data method and cache', async () => {
+    test('Test get clients data method and cache', async () => {
         const { cache, constants } = insuranceService;
         const clients = await insuranceService.getClients();
         expect(Array.isArray(clients)).toBeTruthy();
@@ -51,7 +51,7 @@ describe('insurance module unit tests', () => {
         assert(inCache, 'Error on clients cache');
     });
 
-    test('Get policies data method and cache', async () => {
+    test('Test get policies data method and cache', async () => {
         const { cache, constants } = insuranceService;
         const policies = await insuranceService.getPolicies();
         expect(Array.isArray(policies)).toBeTruthy();
@@ -60,11 +60,37 @@ describe('insurance module unit tests', () => {
         assert(inCache, 'Error on policies cache');
     });
 
-    test('Get filtered policies', async () => {
+    test('Test get policies filters', async () => {
         const policies = await insuranceService.getPolicies({ username: 'Manning' });
         expect(Array.isArray(policies)).toBeTruthy();
         expect(policies.length).toBeTruthy();
         assert((policies[0].id === 'be4bf877-5a72-4ae2-b8f5-3c79e21fc829'),
             'Badly filtered policies');
+    });
+
+    test('Test get client filters', async () => {
+        const clientsByPolicy = await insuranceService.getClients({ 
+            policyId: 'be4bf877-5a72-4ae2-b8f5-3c79e21fc829',
+        });
+        expect(Array.isArray(clientsByPolicy)).toBeTruthy();
+        expect(clientsByPolicy.length).toBeTruthy();
+        assert((clientsByPolicy[0].id === 'e8fd159b-57c4-4d36-9bd7-a59ca13057bb'),
+            'Badly filtered clients by policy id');
+
+        const clientsById = await insuranceService.getClients({ 
+            id: 'e8fd159b-57c4-4d36-9bd7-a59ca13057bb',
+        });
+        expect(Array.isArray(clientsById)).toBeTruthy();
+        expect(clientsById.length).toBeTruthy();
+        assert((clientsById[0].id === 'e8fd159b-57c4-4d36-9bd7-a59ca13057bb'),
+            'Badly filtered clients by id');
+
+        const clientsByName = await insuranceService.getClients({ 
+            name: 'manni',
+        });
+        expect(Array.isArray(clientsById)).toBeTruthy();
+        expect(clientsByName.length).toBeTruthy();
+        assert((clientsByName[0].id === 'e8fd159b-57c4-4d36-9bd7-a59ca13057bb'),
+            'Badly filtered clients by name');
     });
 });
