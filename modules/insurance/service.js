@@ -10,11 +10,19 @@ module.exports = ({ config, cache }) => {
         cache: cache,
         constants : { CACHE_CLIENTS_KEY, CACHE_POLICIES_KEY },
 
-        async getPolicies() {
+        async getPolicies(filters = {}) {
             const cachedPolicies = cache.get(CACHE_POLICIES_KEY);
-            const policies = cachedPolicies ? 
+            let policies = cachedPolicies ? 
                 cachedPolicies : await this.fetchPoliciesFromSource();
             if (!cachedPolicies) cache.set(CACHE_POLICIES_KEY, policies);
+
+            const { username } = filters;
+            if ( username ) {
+                const clients = await this.getClients() || [];
+                const client = clients.find(c => c.name.toLowerCase() === username.toLowerCase());
+                policies = client ? policies.filter(p => p.clientId === client.id) : [];
+            }
+
             return policies;
         },
 
