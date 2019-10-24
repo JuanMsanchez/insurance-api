@@ -7,8 +7,11 @@ describe('insurance routes test', () => {
     const server = app.listen();
     const agent = request(server);
     const config = container.resolve('config');
+    const authService = container.resolve('authService');
     const { host, policiesPath, clientsPath } = config.get('insurance');
-
+    
+    const USR_TOKEN =  authService.getJWT('uuid', 'user');
+    const ADM_TOKEN =  authService.getJWT('uuid', 'admin');
     const CLIENT_ID = 'e8fd159b-57c4-4d36-9bd7-a59ca13057bb';
     const POLICY_ID = 'be4bf877-5a72-4ae2-b8f5-3c79e21fc829';
     const USER_EMAIL = 'manningblankenship@quotezart.com';
@@ -58,31 +61,30 @@ describe('insurance routes test', () => {
     });
 
     test('Test /insurance/token route with non existent user', async () => {
-        const response = await agent.get(`/insurance/token?email=fake@mail.com`)
+        const response = await agent.get(`/insurance/token?email=fake@email.com`)
         expect(response.status).toEqual(400);
     });
 
     test('Test /insurance/clients route with no params', async () => {
-        const response = await agent.get(`/insurance/clients`)
+        const query = `accessToken=${USR_TOKEN}`;        
+        const response = await agent.get(`/insurance/clients?${query}`)
         expect(response.status).toEqual(200);
     });
 
     test('Test /insurance/clients route with valid params', async () => {
-        const policyFiltered = await agent.get(`/insurance/clients?policyId=${POLICY_ID}`)
-        expect(policyFiltered.status).toEqual(200);
-        assert(policyFiltered.body.clients[0].id === CLIENT_ID, 'Error filtering by policy');
-
-        const nameFiltered = await agent.get(`/insurance/clients?name=${USER_NAME}`)
+        const queryName = `name=${USER_NAME}&accessToken=${USR_TOKEN}`;
+        const nameFiltered = await agent.get(`/insurance/clients?${queryName}`)
         expect(nameFiltered.status).toEqual(200);
         assert(nameFiltered.body.clients[0].id === CLIENT_ID, 'Error filtering by name');
-
-        const idFiltered = await agent.get(`/insurance/clients?id=${CLIENT_ID}`)
+        
+        const queryId = `id=${CLIENT_ID}&accessToken=${USR_TOKEN}`;
+        const idFiltered = await agent.get(`/insurance/clients?${queryId}`)
         expect(idFiltered.status).toEqual(200);
         assert(idFiltered.body.clients[0].id === CLIENT_ID, 'Error filtering by id');
     });
 
     test('Test /insurance/clients route with multiple valid params', async () => {
-        const query = `policyId=${POLICY_ID}&id=${CLIENT_ID}&name=${USER_NAME}`;
+        const query = `id=${CLIENT_ID}&name=${USER_NAME}&accessToken=${USR_TOKEN}`;
         const response = await agent.get(`/insurance/clients?${query}`)
         expect(response.status).toEqual(200);
         assert(response.body.clients[0].id === CLIENT_ID,
@@ -90,23 +92,46 @@ describe('insurance routes test', () => {
     });
   
     test('Test /insurance/clients route with ilegal values params', async () => {
-        const response = await agent.get(`/insurance/clients?name=$()`)
+        const query = `name=$()&accessToken=${USR_TOKEN}`;
+        const response = await agent.get(`/insurance/clients?${query}`)
         expect(response.status).toEqual(400);
     });
 
     test('Test /insurance/policies route with no params', async () => {
-        const response = await agent.get(`/insurance/policies`)
+        const query = `accessToken=${ADM_TOKEN}`;
+        const response = await agent.get(`/insurance/policies?${query}`)
         expect(response.status).toEqual(200);
     });
 
     test('Test /insurance/policies route with valid params', async () => {
-        const response = await agent.get(`/insurance/policies?username=${USER_NAME}`)
+        const query = `username=${USER_NAME}&accessToken=${ADM_TOKEN}`;
+        const response = await agent.get(`/insurance/policies?${query}`)
         expect(response.status).toEqual(200);
         assert(response.body.policies[0].id === POLICY_ID, 'Error filtering by username');
     });
 
     test('Test /insurance/policies route with ilegal values params', async () => {
-        const response = await agent.get(`/insurance/policies?username=$()`)
+        const query = `username=$()&accessToken=${ADM_TOKEN}`;
+        const response = await agent.get(`/insurance/policies?${query}`)
+        expect(response.status).toEqual(400);
+    });
+
+    test('Test /insurance/policy/:policyId/clients route with valid params', async () => {
+        const query = `accessToken=${ADM_TOKEN}`;
+        const response = await agent.get(`/insurance/policy/${POLICY_ID}/clients?${query}`)
+        expect(response.status).toEqual(200);
+        assert(response.body.clients[0].id === CLIENT_ID, 'Error fetching clients by policy');
+    });
+
+    test('Test /insurance/policy/:policyId/clients route with user token', async () => {
+        const query = `accessToken=${USR_TOKEN}`;
+        const response = await agent.get(`/insurance/policy/${POLICY_ID}/clients?${query}`)
+        expect(response.status).toEqual(403);
+    });
+   
+    test('Test /insurance/policy/:policyId/clients route with ilegal params', async () => {
+        const query = `accessToken=${ADM_TOKEN}`;
+        const response = await agent.get(`/insurance/policy/$()/clients?${query}`)
         expect(response.status).toEqual(400);
     });
 });

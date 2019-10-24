@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 
-module.exports = ({ insuranceService }) => {
+module.exports = ({ insuranceService, authMiddleware }) => {
+    const { jwtAuthz } = authMiddleware;
     const router = new Router();
     
     const strValidation = new RegExp(/^[A-Z a-z 0-9-_]*$/);
@@ -24,11 +25,10 @@ module.exports = ({ insuranceService }) => {
         }
     });
     
-    router.get('/insurance/clients', async (ctx) => {
-        const { policyId, name, id } = ctx.query;
+    router.get('/insurance/clients', jwtAuthz(['user', 'admin']), async (ctx) => {
+        const { name, id } = ctx.query;
 
         if (!(
-            strValidation.test(policyId) && 
             strValidation.test(name) && 
             strValidation.test(id))
         ) {
@@ -36,7 +36,7 @@ module.exports = ({ insuranceService }) => {
         }
 
         try {
-            const clients = await insuranceService.getClients({ policyId, name, id });
+            const clients = await insuranceService.getClients({ name, id });
             return ctx.ok({ clients });
         } catch (e) {
             console.log(e);
@@ -44,7 +44,23 @@ module.exports = ({ insuranceService }) => {
         }
     });
     
-    router.get('/insurance/policies', async (ctx) => {
+    router.get('/insurance/policy/:policyId/clients', jwtAuthz(['admin']), async (ctx) => {
+        const { policyId } = ctx.params;
+
+        if (!strValidation.test(policyId)) {
+            return ctx.badRequest({ message: 'Ilegal values on filters' });
+        }
+
+        try {
+            const clients = await insuranceService.getClients({ policyId });
+            return ctx.ok({ clients });
+        } catch (e) {
+            console.log(e);
+            return ctx.internalServerError();
+        }
+    });
+
+    router.get('/insurance/policies', jwtAuthz(['admin']), async (ctx) => {
         const { username } = ctx.query;
 
         if (!strValidation.test(username)) {
