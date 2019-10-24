@@ -10,6 +10,10 @@ module.exports = {
         issuer: 'insurance:api:dev',
         audience: 'insurance:api:dev',
         ttl: 7200,
-    }
+    },
+    swagger: {
+        file: './swagger-doc.json',
+        host: 'localhost:3001'
+      },    
 };
   

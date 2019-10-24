@@ -14,6 +14,7 @@ const { JWK } = require('@panva/jose');
 const status = require('./modules/status');
 const insurance = require('./modules/insurance');
 const auth = require('./modules/auth');
+const swagger = require('./modules/swagger');
 
 const {
   createContainer,
@@ -54,10 +55,12 @@ container.register({
   insuranceRoutes: asFunction(insurance.routes),
   authService: asFunction(auth.service),
   authMiddleware: asFunction(auth.middleware),
+  swaggerRoutes: asFunction(swagger.routes),
 });
 
 app.use(respond());
 app.use(container.resolve('statusRoutes'));
 app.use(container.resolve('insuranceRoutes'));
+app.use(container.resolve('swaggerRoutes'));
 
 module.exports = { app, container };

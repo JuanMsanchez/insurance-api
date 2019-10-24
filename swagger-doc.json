@@ -1,0 +1,281 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "",
+      "version": "0.0.1",
+      "title": "Insurance API"
+    },
+    "host": "",
+    "basePath": "/",
+    "tags": [{
+      "name": "Status",
+      "description": "Server status"
+    }],
+    "schemes": [
+      "http"
+    ],
+    "paths": {
+      "/insurance/token": {
+        "post": {
+          "tags": [
+            "Insurance"
+          ],
+          "summary": "Get an access token for the given email",
+          "description": "",
+          "operationId": "getToken",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [{
+            "in": "body",
+            "name": "body",
+            "description": "the client email",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ClientEmail"
+            }
+          }],          
+          "responses": {
+            "200": {
+              "description": "User access token",
+              "schema": {
+                "$ref": "#/definitions/Token"
+              }
+            }
+          }
+        }
+      },
+      "/insurance/clients": {
+        "get": {
+          "tags": [
+            "Insurance"
+          ],
+          "summary": "Fetch clients data",
+          "description": "",
+          "operationId": "getClients",
+          "parameters": [{
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "type": "string"
+          },{
+            "in": "query",
+            "name": "id",
+            "required": false,
+            "type": "string"
+          }],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "clients list",
+              "schema": {
+                "$ref": "#/definitions/ClientsList"
+              }
+            }
+          },
+          "security": [{
+            "AccessToken": []
+          }]
+        }
+      },
+      "/insurance/policies": {
+        "get": {
+          "tags": [
+            "Insurance"
+          ],
+          "summary": "Fetch policies data",
+          "description": "",
+          "operationId": "getPolicies",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [{
+            "in": "query",
+            "name": "username",
+            "required": false,
+            "type": "string"
+          }],          
+          "responses": {
+            "200": {
+              "description": "policies list",
+              "schema": {
+                "$ref": "#/definitions/PoliciesList"
+              }
+            }
+          },
+          "security": [{
+            "AccessToken": []
+          }]
+        }
+      },
+      "/insurance/policy/{policyId}/clients": {
+        "get": {
+          "tags": [
+            "Insurance"
+          ],
+          "summary": "Fetch clients by policy",
+          "description": "",
+          "operationId": "getClientsByPolicy",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [{
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "type": "string"
+          }],          
+          "responses": {
+            "200": {
+              "description": "clients list",
+              "schema": {
+                "$ref": "#/definitions/ClientsList"
+              }
+            }
+          },
+          "security": [{
+            "AccessToken": []
+          }]
+        }
+      },      
+      "/status": {
+        "get": {
+          "tags": [
+            "Status"
+          ],
+          "summary": "Get server status",
+          "description": "",
+          "operationId": "getStatus",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "up and running",
+              "schema": {
+                "$ref": "#/definitions/Status"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securityDefinitions": {
+      "AccessToken": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "description": "The invitation JWT",
+        "in": "header"
+      }
+    },
+    "definitions": {
+      "Success": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "uptime": {
+            "type": "string",
+            "format": "epoch"
+          },
+          "started": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "ClientEmail": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "ClientsList": {
+        "type": "object",
+        "properties": {
+          "clients": {
+            "type": "array",
+            "items":  {
+              "$ref": "#/definitions/Client"
+            }
+          }
+        }
+      },
+      "Client": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "PoliciesList": {
+        "type": "object",
+        "properties": {
+          "policies": {
+            "type": "array",
+            "items":  {
+              "$ref": "#/definitions/Policy"
+            }
+          }
+        }
+      },
+      "Policy": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "ammuntInsured": {
+            "type": "float"
+          },
+          "email": {
+            "type": "string"
+          },
+          "inceptionDate": {
+            "type": "string"
+          },
+          "installmentPayment": {
+            "type": "boolean"
+          },
+          "clientId": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+  
