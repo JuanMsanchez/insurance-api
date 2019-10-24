@@ -19,6 +19,9 @@ Ideally the invitation tokens should be sent directly to the user inbox and then
 I've chosen to use a RSA asymetric key for signing a verifying the JWT. The key is currently being generated at runtime and ketp in memory, the problem with this approach is that the tokens will only be valid for the same instance that originally emited the token.
 In a real world scenario we could have a stored key and then share the public part through a REST endpoint so other services could validate the JWTs.
 
+#### Cache layer & Database
+I added `node-cache` in replacement of Redis, which would give us better cache support through all the nodes.
+
 #### Notes
 I tracked the .env file for setting up the `NODE_TLS_REJECT_UNAUTHORIZED` environment variable.
 Please keep in mind that `NODE_TLS_REJECT_UNAUTHORIZED` is set just for testing purpouses.
