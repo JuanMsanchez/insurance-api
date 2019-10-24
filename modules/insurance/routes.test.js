@@ -54,14 +54,14 @@ describe('insurance routes test', () => {
     });
 
     test('Test /insurance/token route with valid email', async () => {
-        const response = await agent.get(`/insurance/token?email=${USER_EMAIL}`)
+        const response = await agent.post(`/insurance/token`).send({email: USER_EMAIL})
         expect(response.status).toEqual(200);
         expect(response.type).toEqual('application/json');
         expect(response.body.token).toBeTruthy();
     });
 
     test('Test /insurance/token route with non existent user', async () => {
-        const response = await agent.get(`/insurance/token?email=fake@email.com`)
+        const response = await agent.post(`/insurance/token`).send({email: 'fake@email.com'})
         expect(response.status).toEqual(400);
     });
 

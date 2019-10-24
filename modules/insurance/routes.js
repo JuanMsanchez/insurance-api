@@ -7,8 +7,8 @@ module.exports = ({ insuranceService, authMiddleware }) => {
     const strValidation = new RegExp(/^[A-Z a-z 0-9-_]*$/);
     const emailValidation = new RegExp(/\S+@\S+\.\S+/);
 
-    router.get('/insurance/token', async (ctx) => {
-        const { email } = ctx.query;
+    router.post('/insurance/token', async (ctx) => {
+        const { email } = ctx.request.body;
 
         if (!emailValidation.test(email))
             return ctx.badRequest({ message: 'Invalid or missing email param' });
