@@ -51,10 +51,12 @@ container.register({
 container.register({
   statusRoutes: asFunction(status.routes),
   insuranceService: asFunction(insurance.service),
+  insuranceRoutes: asFunction(insurance.routes),
   authService: asFunction(auth.service),
 });
 
 app.use(respond());
 app.use(container.resolve('statusRoutes'));
+app.use(container.resolve('insuranceRoutes'));
 
 module.exports = { app, container };
