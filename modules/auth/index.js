@@ -1,3 +1,4 @@
 const service = require('./service');
+const middleware = require('./middleware');
 
-module.exports = { service };
+module.exports = { service, middleware };

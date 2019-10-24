@@ -53,6 +53,7 @@ container.register({
   insuranceService: asFunction(insurance.service),
   insuranceRoutes: asFunction(insurance.routes),
   authService: asFunction(auth.service),
+  authMiddleware: asFunction(auth.middleware),
 });
 
 app.use(respond());
