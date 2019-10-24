@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-module.exports = ({ config, cache }) => {
+module.exports = ({ config, cache, authService }) => {
     const { host, policiesPath, clientsPath } = config.get('insurance');
 
     const CACHE_POLICIES_KEY = 'policies';
@@ -9,6 +9,16 @@ module.exports = ({ config, cache }) => {
     return {
         cache: cache,
         constants : { CACHE_CLIENTS_KEY, CACHE_POLICIES_KEY },
+
+        async getAccessToken(email) {
+            const clients = await this.getClients();
+            const user = clients.find(u => u.email === email);
+
+            if(!user) throw new Error('Invalid user');
+            const { id, role } = user;
+            const token = authService.getJWT(id, role);
+            return token;
+        },
 
         async getPolicies(filters = {}) {
             const cachedPolicies = cache.get(CACHE_POLICIES_KEY);
