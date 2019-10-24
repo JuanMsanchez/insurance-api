@@ -58,11 +58,9 @@ describe('auth middleware test', () => {
   test('Test middleware with valid token and scopes', async () => {
     const token =  authService.getJWT('uuid', 'admin');
     const ctx = { request: {}, headers: { authorization: token }, query: {} };
-    try {
-        await authMiddleware.jwtAuthz(['admin']).call(null, ctx);
-    } catch (e)  {
-        expect(e.status).toEqual(403);
-        expect(e.message).toEqual('Insufficient scope');
-    }
+    const isAuthorized = await authMiddleware.jwtAuthz(['admin']).call(null, ctx, () => {
+        return 'ok';
+    });
+    assert(isAuthorized === 'ok', 'Error validating token');
   });  
 });
