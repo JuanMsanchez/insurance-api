@@ -33,7 +33,8 @@ npm start
 | Module name        | Description                              | Base path               |
 | ------------------ | ---------------------------------------- | ----------------------- |
 | status             | returns the API status and uptime        | /status                 |
-
+| swagger            | provides swagger doc for all endpoints   | /swagger                |
+| invitation         | insurance rest module                    | /insurance/*            |
 
 ## Test
 Tests are implemented with [Jest](https://jestjs.io/en/)
