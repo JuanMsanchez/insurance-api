@@ -14,7 +14,7 @@
     "@koa/cors": "^3.0.0",
     "@panva/jose": "^1.9.2",
     "awilix": "^4.2.2",
-    "config": "^3.2.3",
+    "config": "^3.3.8",
     "dotenv": "^8.2.0",
     "koa": "^2.10.0",
     "koa-bodyparser": "^4.2.1",
